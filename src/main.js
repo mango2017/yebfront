@@ -8,6 +8,8 @@ import store from './store'
 import { postRequest, putRequest, getRequest, deleteRequest } from './utils/api'
 import { initMenu } from './utils/menus'
 
+import 'font-awesome/css/font-awesome.css'
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

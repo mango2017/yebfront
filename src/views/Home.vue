@@ -4,11 +4,11 @@
       <el-header>Header</el-header>
       <el-container>
         <el-aside width="200px">
-          <el-menu router>
+          <el-menu router unique-opened>
             <template v-for="(item, index) in routes">
-              <el-submenu index="1" :key="index" v-if="!item.hidden">
+              <el-submenu :index="index+''" :key="index" v-if="!item.hidden">
                 <template slot="title">
-                  <i class="el-icon-location"></i>{{ item.name }}</template>
+                  <i :class="item.iconCls" style="color:bisque;margin-right:5px"></i>{{ item.name }}</template>
                 <el-menu-item
                   :index="children.path"
                   v-for="(children, indexj) in item.children"
