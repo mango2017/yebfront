@@ -13,6 +13,7 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-unused-vars': 'off'
+    'no-unused-vars': 'off',
+    'vue/no-unused-components': 'off' // 当存在定义而未使用的组件时，关闭报错
   }
 }

@@ -32,8 +32,8 @@ export default {
     return {
       captchaUrl: '/captcha?time=' + new Date(),
       loginForm: {
-        username: 'admin',
-        password: '123',
+        username: '',
+        password: '',
         code: ''
       },
       checked: true,
@@ -59,7 +59,10 @@ export default {
               // console.log(JSON.stringify(resp))
               const tokenStr = resp.object.tokenHead + resp.object.token
               window.sessionStorage.setItem('tokenStr', tokenStr)
-              this.$router.replace('/home')
+              // this.$router.replace('/home')
+              // 跳转首页
+              const path = this.$route.query.redirect
+              this.$router.replace((path === '/' || path === undefined) ? '/home' : path)
             }
           })
         } else {
