@@ -14,6 +14,8 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-unused-vars': 'off',
-    'vue/no-unused-components': 'off' // 当存在定义而未使用的组件时，关闭报错
+    'vue/no-unused-components': 'off', // 当存在定义而未使用的组件时，关闭报错
+    'indent': ['off',2],
+    'space-before-function-paren': 0
   }
 }
