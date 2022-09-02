@@ -6,6 +6,7 @@
       <el-tab-pane label="职称管理" name="JoblevelMana"><JoblevelMana></JoblevelMana></el-tab-pane>
       <el-tab-pane label="奖惩规则" name="EcMana"><EcMana></EcMana></el-tab-pane>
       <el-tab-pane label="权限组" name="PermissMana"><PermissMana></PermissMana></el-tab-pane>
+      <el-tab-pane label="政治面貌" name="PoliticsMana"><PoliticsMana></PoliticsMana></el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -16,12 +17,13 @@ import EcMana from '../../components/sys/basic/EcMana'
 import JoblevelMana from '../../components/sys/basic/JoblevelMana'
 import PermissMana from '../../components/sys/basic/PermissMana'
 import PosMana from '../../components/sys/basic/PosMana'
+import PoliticsMana from '../../components/sys/basic/PoliticsMana'
 
 export default {
   name: 'SysBasic',
   data () {
     return {
-      activeName: 'DepMana'
+      activeName: 'PoliticsMana'
     }
   },
   components: {
@@ -29,7 +31,8 @@ export default {
     EcMana,
     JoblevelMana,
     PermissMana,
-    PosMana
+    PosMana,
+    PoliticsMana
 }
 }
 </script>

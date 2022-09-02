@@ -155,7 +155,6 @@ export default {
     initAdmins() {
       this.getRequest('/system/admin/?keywords=' + this.keywords).then(resp => {
         if (resp) {
-          console.log(resp)
           this.admins = resp
         }
       })
