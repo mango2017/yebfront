@@ -1,14 +1,14 @@
 <template>
   <div>
     <div style="display:flex;justify-content:center;margin-bottom: 10px;">
-      <el-input placeholder="通过用户名搜索用户" prefix-icon="el-icon-search" style="width:400px;margin-right: 10px;"></el-input>
-      <el-button type="primary" icon="el-icon-search">搜索</el-button>
+      <el-input placeholder="通过用户名搜索用户" prefix-icon="el-icon-search" style="width:400px;margin-right: 10px;" v-model="keywords"></el-input>
+      <el-button type="primary" icon="el-icon-search" @click="doSearch">搜索</el-button>
     </div>
     <div class="admin">
       <el-card class="admin-card" v-for="(admin,index) in admins" :key="index">
         <div slot="header" class="clearfix">
           <span>{{admin.name}}</span>
-          <el-button style="float: right; padding: 3px 0;color: red" type="text" icon="el-icon-delete"></el-button>
+          <el-button style="float: right; padding: 3px 0;color: red" type="text" icon="el-icon-delete" @click="deleteAdmin(admin)"></el-button>
         </div>
         <div>
           <div class="img-container">
@@ -24,14 +24,34 @@
                 v-model="admin.enabled"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
-                active-text="已启用"
-                inactive-text="未启用">
-              </el-switch>
+                @change="enabledChange(admin)"
+                active-text="启用"
+                inactive-text="禁用">
+            </el-switch>
             </div>
             <div>
               用户角色：
               <el-tag style="margin-right: 4px;" type="success" v-for="(role,indexj) in admin.roles" :key="indexj">{{role.nameZh}}</el-tag>
-              <el-button type="text" icon="el-icon-more"></el-button>
+              <el-popover
+                  placement="right"
+                  title="角色列表"
+                  width="200"
+                  @show="showPop(admin)"
+                  @hide="hidePop(admin)"
+                  trigger="click">
+                <!-- 17、更新操作员角色 下拉框 -->
+                <!-- 22、v-model="selectedRoles" 存的是1个角色id，multiple 多选，显示已有角色 -->
+                <el-select v-model="selectedRoles" multiple placeholder="请选择">
+                  <el-option
+                      v-for="(r,index) in allRoles"
+                      :key="index"
+                      :label="r.nameZh"
+                      :value="r.id">
+                  </el-option>
+                </el-select>
+                <!-- 3个点按钮 ... -->
+                <el-button slot="reference" type="text" icon="el-icon-more"></el-button>
+              </el-popover>
             </div>
             <div>备注：{{admin.remark}}</div>
           </div>
@@ -45,15 +65,95 @@ export default {
   name: 'SysAdmin',
   data() {
     return {
-      admins: []
+      admins: [],
+      keywords: '',
+      allRoles: [],
+      selectedRoles: []
     }
   },
   mounted() {
     this.initAdmins()
   },
   methods: {
+    hidePop(admin) {
+      const roles = []
+      Object.assign(roles, admin.roles) // 拷贝对象
+      let flag = false
+      if (roles.length !== this.selectedRoles.length) {
+        flag = true
+      } else {
+        for (let i = 0; i < roles.length; i++) {
+          const role = roles[i]
+          for (let j = 0; j < this.selectedRoles.length; j++) {
+            const sr = this.selectedRoles[i]
+            if (role.id === sr) {
+              roles.splice(i, 1)
+              i--
+              break
+            }
+          }
+        }
+        if (roles.length !== 0) {
+          flag = true
+        }
+      }
+      if (flag) {
+        let url = '/system/admin/role?adminId=' + admin.id
+        this.selectedRoles.forEach(sr => {
+          url += '&rids=' + sr
+        })
+        this.putRequest(url).then(resp => {
+          if (resp) {
+            this.initAdmins()
+          }
+        })
+      }
+    },
+    showPop(admin) {
+      this.initAllRoles()
+      const roles = admin.roles
+      this.selectedRoles = []
+      roles.forEach(r => {
+        this.selectedRoles.push(r.id)
+      })
+    },
+    initAllRoles() {
+      this.getRequest('/system/admin/roles').then(resp => {
+        if (resp) {
+          this.allRoles = resp
+        }
+      })
+    },
+    enabledChange(admin) {
+      this.putRequest('/system/admin/', admin).then(resp => {
+        if (resp) {
+          this.initAdmins()
+        }
+      })
+    },
+    deleteAdmin(admin) {
+      this.$confirm('此操作将永久删除该[' + admin.name + ']操作员,是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteRequest('/system/admin/' + admin.id).then(resp => {
+            if (resp) {
+              this.initAdmins()
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    doSearch() {
+      this.initAdmins()
+    },
     initAdmins() {
-      this.getRequest('/system/admin/').then(resp => {
+      this.getRequest('/system/admin/?keywords=' + this.keywords).then(resp => {
         if (resp) {
           console.log(resp)
           this.admins = resp
@@ -66,11 +166,13 @@ export default {
 <style>
   .admin{
     display: flex;
-    justify-content: space-around;
+    justify-content:start;
+    flex-wrap: wrap;
   }
   .admin-card{
     width: 700px;
     margin-right: 20px;
+    margin-bottom: 20px;
   }
   .userface-img{
     width: 72px;
