@@ -2,7 +2,7 @@
   <div>
     <el-container>
       <el-header class="homeHeader">
-        <div class="title">云E办</div>
+        <div class="title">XXXX</div>
         <el-dropdown class="userInfo" @command="commandHandler">
           <span class="el-dropdown-link">
             {{ user.name }}<i><img :src="user.userFace" alt="" /></i>
